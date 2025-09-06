@@ -5,6 +5,11 @@ const router = express.Router();
 
 // router.param("id", () => {});
 
+// Top 5 highest rated and cheap tours
+router
+  .route("/top-5-cheap")
+  .get(tourController.aliasTopTour, tourController.getAllTours);
+
 router
   .route("/")
   .get(tourController.getAllTours)
