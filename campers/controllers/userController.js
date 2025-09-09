@@ -1,3 +1,4 @@
+const User = require("../models/userModel");
 // Users
 exports.getAllUsers = (req, res, next) => {
   res.status(500).json({
