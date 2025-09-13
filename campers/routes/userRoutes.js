@@ -10,6 +10,13 @@ router.post("/signup", authController.signUp);
 // Signin
 router.post("/signin", authController.signIn);
 
+// Forgot Password
+router.post("/forgot-password", authController.forgotPassword);
+
+// Reset Password
+router.patch("/reset-password/:token", authController.resetPassword);
+
+// USER Routes CRUD
 router
   .route("/")
   .get(userController.getAllUsers)
