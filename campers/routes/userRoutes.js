@@ -23,6 +23,9 @@ router.patch(
   authController.updatePassword
 );
 
+// Update User Details
+router.patch("/update-me", authController.protect, userController.updateMe);
+
 // USER Routes CRUD
 router
   .route("/")
