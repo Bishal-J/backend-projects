@@ -18,6 +18,30 @@ const signToken = (id) => {
   );
 };
 
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+
+  res.cookie("jwt", token, cookieOptions);
+
+  user.password = undefined;
+
+  res.status(statusCode).json({
+    status: "success",
+    token: token,
+    data: {
+      user,
+    },
+  });
+};
+
 exports.signUp = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -26,15 +50,16 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
   });
 
-  const token = signToken(newUser._id);
+  // const token = signToken(newUser._id);
 
-  res.status(201).json({
-    status: "success",
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  // res.status(201).json({
+  //   status: "success",
+  //   token,
+  //   data: {
+  //     user: newUser,
+  //   },
+  // });
+  createSendToken(newUser, 200, res);
 });
 
 exports.signIn = catchAsync(async (req, res, next) => {
@@ -56,12 +81,13 @@ exports.signIn = catchAsync(async (req, res, next) => {
   }
 
   // 3. If everything is Okay, send the token to the client
-  const token = signToken(user._id);
+  // const token = signToken(user._id);
 
-  res.status(200).json({
-    status: "success",
-    token,
-  });
+  // res.status(200).json({
+  //   status: "success",
+  //   token,
+  // });
+  createSendToken(user, 200, res);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -135,12 +161,13 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // This is updated in the User Modal
 
   // 4. Log the user in, Send New Token
-  const token = signToken(user._id);
+  // const token = signToken(user._id);
 
-  res.status(200).json({
-    status: "success",
-    token,
-  });
+  // res.status(200).json({
+  //   status: "success",
+  //   token,
+  // });
+  createSendToken(user, 200, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -164,12 +191,13 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // User.findByIdAndUpdate will not work as expected use user.save to run the instance methods in the user modal
   await user.save();
   // 4. Log the user in, Send NEW Token
-  const token = signToken(user._id);
+  // const token = signToken(user._id);
 
-  res.status(200).json({
-    status: "success",
-    token,
-  });
+  // res.status(200).json({
+  //   status: "success",
+  //   token,
+  // });
+  createSendToken(user, 200, res);
 });
 
 // =================================================
