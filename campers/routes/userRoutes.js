@@ -16,6 +16,13 @@ router.post("/forgot-password", authController.forgotPassword);
 // Reset Password
 router.patch("/reset-password/:token", authController.resetPassword);
 
+// Reset Password Logged In user
+router.patch(
+  "/update-password",
+  authController.protect,
+  authController.updatePassword
+);
+
 // USER Routes CRUD
 router
   .route("/")

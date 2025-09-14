@@ -143,6 +143,35 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1. Get user from the collection
+  const user = await User.findById(req.user._id).select("+password");
+
+  // 2. Check if the POSTed current password is correct
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(
+      new AppError(
+        "Password Incorrect! Please Check your current password",
+        401
+      )
+    );
+  }
+
+  // 3. If password is correctr update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+
+  // User.findByIdAndUpdate will not work as expected use user.save to run the instance methods in the user modal
+  await user.save();
+  // 4. Log the user in, Send NEW Token
+  const token = signToken(user._id);
+
+  res.status(200).json({
+    status: "success",
+    token,
+  });
+});
+
 // =================================================
 // AUTHENTICATION
 exports.protect = catchAsync(async (req, res, next) => {
