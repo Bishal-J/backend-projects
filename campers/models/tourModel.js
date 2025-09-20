@@ -106,6 +106,13 @@ const tourSchema = new mongoose.Schema(
 
     // Referencing
     guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+    // Child Referencing
+    // reviews: [
+    //   {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: "Review",
+    //   },
+    // ],
   },
   {
     toJSON: {
@@ -117,6 +124,13 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
+});
+
+// Virtually adding a reference to a field
+tourSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "tour",
 });
 
 // Mongoose middlewares, document, query, aggregate, model
