@@ -68,8 +68,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     .sort()
     .limitFields()
     .paginate();
-
-  const tours = await features.query;
+  const tours = await features.query.populate("reviews");
 
   // SEND RESPONSE
   res.status(200).json({
@@ -131,7 +130,7 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params?.id);
 
   if (!tour) {
-    return next(new AppError("No tour found with that ID", 404));
+    return next(new AppError("No tour found with that ID", 204));
   }
 
   res.status(204).json({

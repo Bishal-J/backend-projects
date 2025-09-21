@@ -21,8 +21,6 @@ exports.createReview = catchAsync(async (req, res, next) => {
   const tourId = req.body.tour || req.params.tourId;
   const userId = req.user.id;
 
-  console.log(tourId, userId);
-
   // 1. Check if tour exists
   const tour = await Tour.findById(tourId);
 
@@ -41,5 +39,18 @@ exports.createReview = catchAsync(async (req, res, next) => {
     data: {
       review: newReview,
     },
+  });
+});
+
+exports.deleteReview = catchAsync(async (req, res, next) => {
+  const review = await Review.findByIdAndDelete(req.params?.id);
+
+  if (!review) {
+    return next(new AppError("No review found with that ID", 204));
+  }
+
+  res.status(301).json({
+    status: "success",
+    data: null,
   });
 });
