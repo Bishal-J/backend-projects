@@ -16,21 +16,20 @@ router.post("/forgot-password", authController.forgotPassword);
 // Reset Password
 router.patch("/reset-password/:token", authController.resetPassword);
 
+// Add Protected route below this
+router.use(authController.protect);
+
 // Reset Password Logged In user
-router.patch(
-  "/update-password",
-  authController.protect,
-  authController.updatePassword
-);
-
+router.patch("/update-password", authController.updatePassword);
 // Update User Details
-router.patch("/update-me", authController.protect, userController.updateMe);
-
+router.patch("/update-me", userController.updateMe);
 // Delete User
-router.delete("/delete-me", authController.protect, userController.deleteMe);
-
+router.delete("/delete-me", userController.deleteMe);
 // Get User
-router.get("/me", authController.protect, userController.getMe);
+router.get("/me", userController.getMe);
+
+// Routes accessible only to admin below this
+router.use(authController.restrictTo("admin"));
 
 // USER Routes CRUD
 router

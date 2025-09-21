@@ -10,19 +10,17 @@ const router = express.Router({
 // POST /reviews
 // Get /reviews
 
+// Routes below this need authentication
+router.use(authController.protect);
+
 router
   .route("/")
   .get(reviewController.getAllReview)
-  .post(
-    authController.protect,
-    authController.restrictTo("user"),
-    reviewController.createReview
-  );
+  .post(authController.restrictTo("user"), reviewController.createReview);
 
 router
   .route("/:id")
   .delete(
-    authController.protect,
     authController.restrictTo("user", "admin"),
     reviewController.deleteReview
   );
