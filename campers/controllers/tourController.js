@@ -69,6 +69,8 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     .limitFields()
     .paginate();
   const tours = await features.query.populate("reviews");
+  // To get information about the query
+  // const tours = await features.query.populate("reviews").explain();
 
   // SEND RESPONSE
   res.status(200).json({
