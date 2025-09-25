@@ -1,7 +1,9 @@
 const express = require("express");
+// const path = require("path");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const cors = require("cors");
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
@@ -11,8 +13,16 @@ const { globalErrorHandler } = require("./controllers/errorController");
 
 const app = express();
 
+// Template Engine and Serving Static Files
+// app.set("view engine", "pug");
+// app.set("views", path.join(__dirname, "views"));
+// app.use(express.static(path.join(__dirname, "public")));
+
 // Set security HTTP headers (set at the top so that all the headers are added first)
 app.use(helmet());
+
+// Enabling Cors
+app.use(cors());
 
 //  1. Middlewares
 if (process.env.NODE_ENV === "development") {
@@ -44,10 +54,9 @@ app.use(
 // Prevent parameter pollution
 // app.use(hpp());
 
-// Serving Static Files
-app.use(express.static(`${__dirname}/public`));
-
 // 2. Routes
+
+// API Routes
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/review", reviewRouter);
