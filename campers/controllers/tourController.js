@@ -275,6 +275,8 @@ exports.getDistances = catchAsync(async (req, res, next) => {
   const { latlng, unit } = req.params;
   const [lat, lng] = latlng.split(",");
 
+  const multiplier = unit === "mi" ? 0.000621371 : 0.001;
+
   if (!lat || !lng) {
     return next(
       new AppError(
@@ -292,7 +294,7 @@ exports.getDistances = catchAsync(async (req, res, next) => {
           coordinates: [lng * 1, lat * 1],
         },
         distanceField: "distance",
-        distanceMultiplier: 0.001,
+        distanceMultiplier: multiplier,
       },
     },
     {
