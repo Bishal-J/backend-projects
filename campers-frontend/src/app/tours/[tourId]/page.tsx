@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useGetSingleTour } from "@/hooks/apis/tours/useGetSingleTour";
 import { useParams, useRouter } from "next/navigation";
-import { MapPin, Clock, Users, Star, ArrowLeft } from "lucide-react";
+import { MapPin, Clock, Users, Star, ArrowLeft, Home } from "lucide-react";
 
 export default function SingleTour() {
   const { tourId } = useParams<{ tourId?: string }>();
@@ -31,15 +31,24 @@ export default function SingleTour() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-14 space-y-16">
-      {/* Back Button */}
-      <button
-        onClick={() => router.back()}
-        className="inline-flex items-center gap-2 text-accent font-semibold text-base hover:text-accent/80 transition"
-      >
-        <ArrowLeft size={20} />
-        Back
-      </button>
+    <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-14 space-y-20">
+      {/* Back/Home Button */}
+      <div className="flex justify-between items-center">
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-2 text-accent font-semibold text-base hover:text-accent/80 transition"
+        >
+          <ArrowLeft size={20} />
+          Back
+        </button>
+        <button
+          onClick={() => router.push("/")}
+          className="inline-flex items-center gap-2 text-accent font-semibold text-base hover:text-accent/80 transition"
+        >
+          <Home size={20} />
+          Home
+        </button>
+      </div>
 
       {/* Hero Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -82,36 +91,36 @@ export default function SingleTour() {
       </div>
 
       {/* Locations */}
-      <section className="space-y-5">
-        <h2 className="text-3xl font-semibold text-foreground border-b border-muted/30 pb-2">
+      <section className="space-y-6">
+        <h2 className="text-3xl font-semibold text-foreground border-b border-muted/30 pb-3">
           Locations
         </h2>
-        <ul className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {data.locations.map((loc) => (
-            <li
+            <div
               key={loc._id}
-              className="flex items-center gap-4 text-base text-foreground bg-surface p-5 rounded-2xl shadow-md border border-muted/25 hover:shadow-lg transition-shadow cursor-default"
+              className="flex items-center gap-4 text-base text-foreground bg-surface p-5 rounded-2xl shadow-md border border-muted/25 hover:shadow-lg transition-shadow"
             >
               <MapPin size={22} className="text-accent" />
               <span>
                 <span className="font-semibold">Day {loc.day}:</span>{" "}
                 {loc.description}
               </span>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </section>
 
       {/* Start Dates */}
       <section>
-        <h2 className="text-3xl font-semibold text-foreground mb-4 border-b border-muted/30 pb-2">
+        <h2 className="text-3xl font-semibold text-foreground mb-6 border-b border-muted/30 pb-2">
           Start Dates
         </h2>
-        <div className="flex flex-wrap gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {data.startDates.map((date, idx) => (
-            <span
+            <div
               key={idx}
-              className="inline-block px-5 py-2 rounded-full bg-accent/15 text-accent font-semibold text-sm cursor-default select-none shadow-sm"
+              className="flex items-center justify-center px-4 py-2 rounded-xl bg-accent/10 text-accent font-semibold text-sm shadow hover:shadow-md transition-shadow cursor-default select-none"
               title={new Date(date).toLocaleDateString(undefined, {
                 weekday: "long",
                 year: "numeric",
@@ -124,24 +133,29 @@ export default function SingleTour() {
                 day: "numeric",
                 year: "numeric",
               })}
-            </span>
+            </div>
           ))}
         </div>
       </section>
 
       {/* Description */}
-      <section className="space-y-4 max-w-4xl">
-        <h2 className="text-3xl font-semibold text-foreground border-b border-muted/30 pb-2">
-          About this Tour
-        </h2>
-        <p className="text-lg text-muted leading-relaxed">{data.description}</p>
+      <section>
+        <div className="bg-surface rounded-3xl p-8 shadow-md border border-muted/20">
+          <h2 className="text-3xl font-semibold text-foreground border-b border-muted/30 pb-3 mb-4">
+            About this Tour
+          </h2>
+          <p className="text-lg text-muted leading-relaxed">
+            {data.description}
+          </p>
+        </div>
       </section>
 
       {/* Reviews */}
-      <section className="space-y-6 max-w-4xl">
-        <h2 className="text-3xl font-semibold text-foreground border-b border-muted/30 pb-2">
+      <section>
+        <h2 className="text-3xl font-semibold text-foreground border-b border-muted/30 pb-3 mb-4">
           Reviews
         </h2>
+
         {data.reviews.length === 0 ? (
           <p className="text-muted italic text-lg">
             No reviews yet for this tour.
@@ -151,10 +165,11 @@ export default function SingleTour() {
             {data.reviews.map((review) => (
               <div
                 key={review._id}
-                className="flex gap-5 p-5 border border-muted/30 rounded-2xl bg-surface shadow-md hover:shadow-lg transition-shadow"
+                className="flex flex-col sm:flex-row gap-4 p-6 rounded-2xl bg-surface border border-muted/20 shadow hover:shadow-lg transition-shadow"
               >
+                {/* Avatar */}
                 {review.user?.photo ? (
-                  <div className="w-14 h-14 relative rounded-full overflow-hidden flex-shrink-0 shadow-md">
+                  <div className="w-16 h-16 relative rounded-full overflow-hidden flex-shrink-0 shadow-md">
                     <Image
                       src={`/users/${review.user.photo}`}
                       alt={review.user.name}
@@ -163,12 +178,14 @@ export default function SingleTour() {
                     />
                   </div>
                 ) : (
-                  <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center text-foreground font-semibold text-xl">
-                    {review.user?.name?.[0].toUpperCase() || "A"}
+                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center text-foreground font-semibold text-xl">
+                    {review.user?.name?.[0]?.toUpperCase() || "A"}
                   </div>
                 )}
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
+
+                {/* Review Content */}
+                <div className="flex-1 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold text-lg text-foreground">
                       {review.user?.name || "Anonymous"}
                     </span>
