@@ -11,7 +11,7 @@ const getToken = (): string | null => localStorage.getItem("token");
 
 const authHeaders = (): Record<string, string> => {
   const token = getToken();
-  return token ? { Authorization: token } : {};
+  return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
 // --- HTTP Methods ---

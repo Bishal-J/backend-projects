@@ -1,7 +1,5 @@
 "use client";
 
-import Footer from "@/components/footer/Footer";
-import Header from "@/components/header/Header";
 import CampCard from "@/components/cards/CampCard";
 import { useGetTours } from "@/hooks/apis/tours/useGetTours";
 import CampCardSkeleton from "@/components/cards/CampCardSkeleton";
@@ -11,8 +9,6 @@ export default function Home() {
 
   return (
     <div>
-      <Header />
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {isLoading ? (
           <CampCardSkeleton />
@@ -35,8 +31,6 @@ export default function Home() {
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 }

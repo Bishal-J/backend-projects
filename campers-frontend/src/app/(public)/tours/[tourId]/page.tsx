@@ -41,13 +41,6 @@ export default function SingleTour() {
           <ArrowLeft size={20} />
           Back
         </button>
-        <button
-          onClick={() => router.push("/")}
-          className="inline-flex items-center gap-2 text-accent font-semibold text-base hover:text-accent/80 transition"
-        >
-          <Home size={20} />
-          Home
-        </button>
       </div>
 
       {/* Hero Section */}
@@ -89,6 +82,30 @@ export default function SingleTour() {
           </div>
         </div>
       </div>
+
+      {/* Additional Tour Images */}
+      {data.images && data.images.length > 0 && (
+        <section className="space-y-6">
+          <h2 className="text-3xl font-semibold text-foreground border-b border-muted/30 pb-3">
+            More Photos
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {data.images.map((img, index) => (
+              <div
+                key={index}
+                className="relative h-60 rounded-2xl overflow-hidden shadow-md border border-muted/20 hover:scale-[1.02] transition-transform duration-300"
+              >
+                <Image
+                  src={`/images/${img}`}
+                  alt={`Tour Image ${index + 1}`}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Locations */}
       <section className="space-y-6">
@@ -137,6 +154,43 @@ export default function SingleTour() {
           ))}
         </div>
       </section>
+
+      {/* Tour Guides */}
+      {data.guides && data.guides.length > 0 && (
+        <section className="space-y-6">
+          <h2 className="text-3xl font-semibold text-foreground border-b border-muted/30 pb-3">
+            Your Tour Guides
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {data.guides.map((guide) => (
+              <div
+                key={guide._id}
+                className="flex items-center gap-4 p-5 bg-surface border border-muted/20 rounded-2xl shadow hover:shadow-lg transition-shadow"
+              >
+                {/* Guide Photo */}
+                <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 shadow-md">
+                  <Image
+                    src={`/users/${guide.photo}`}
+                    alt={guide.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                {/* Guide Info */}
+                <div className="flex flex-col">
+                  <span className="font-semibold text-lg text-foreground">
+                    {guide.name}
+                  </span>
+                  <span className="text-sm text-muted capitalize">
+                    {guide.role.replace("-", " ")}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Description */}
       <section>

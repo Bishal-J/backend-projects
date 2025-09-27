@@ -1,25 +1,23 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
+import { signInSchema } from "@/validations/authValidators";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function SignIn() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { signIn, isAuthenticating } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // TODO: Replace with real API call
-    setTimeout(() => {
-      setLoading(false);
-      router.push("/"); // Redirect to home on success
-    }, 1000);
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: signInSchema,
+    onSubmit: (values) => {
+      signIn(values.email, values.password);
+    },
+  });
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -31,7 +29,7 @@ export default function SignIn() {
           Enter your credentials to access your account
         </p>
 
-        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-6" onSubmit={formik.handleSubmit}>
           <div>
             <label
               htmlFor="email"
@@ -42,11 +40,18 @@ export default function SignIn() {
             <input
               type="email"
               id="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-muted/30 bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+              {...formik.getFieldProps("email")}
+              className={`w-full px-4 py-2 rounded-xl border ${
+                formik.touched.email && formik.errors.email
+                  ? "border-red-500"
+                  : "border-muted/30"
+              } bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent`}
             />
+            {formik.touched.email && formik.errors.email && (
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.email}
+              </div>
+            )}
           </div>
 
           <div>
@@ -59,19 +64,26 @@ export default function SignIn() {
             <input
               type="password"
               id="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-muted/30 bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+              {...formik.getFieldProps("password")}
+              className={`w-full px-4 py-2 rounded-xl border ${
+                formik.touched.password && formik.errors.password
+                  ? "border-red-500"
+                  : "border-muted/30"
+              } bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent`}
             />
+            {formik.touched.password && formik.errors.password && (
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.password}
+              </div>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isAuthenticating}
             className="w-full py-3 bg-accent text-white font-medium rounded-xl shadow hover:opacity-90 transition"
           >
-            {loading ? "Signing In..." : "Sign In"}
+            {isAuthenticating ? "Signing In..." : "Sign In"}
           </button>
         </form>
 

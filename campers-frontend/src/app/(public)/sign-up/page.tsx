@@ -1,31 +1,30 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
+import { signUpSchema } from "@/validations/authValidators";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function SignUp() {
-  const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { signUp, isAuthenticating } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-    setLoading(true);
-
-    // TODO: Replace with real API call
-    setTimeout(() => {
-      setLoading(false);
-      router.push("/"); // Redirect to home after signup
-    }, 1000);
-  };
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      passwordConfirm: "",
+    },
+    validationSchema: signUpSchema,
+    onSubmit: async (values) => {
+      signUp(
+        values.name,
+        values.email,
+        values.password,
+        values.passwordConfirm
+      );
+    },
+  });
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -37,7 +36,8 @@ export default function SignUp() {
           Create your account to get started
         </p>
 
-        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-6" onSubmit={formik.handleSubmit}>
+          {/* Name */}
           <div>
             <label
               htmlFor="name"
@@ -48,13 +48,21 @@ export default function SignUp() {
             <input
               type="text"
               id="name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-muted/30 bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+              {...formik.getFieldProps("name")}
+              className={`w-full px-4 py-2 rounded-xl border ${
+                formik.touched.name && formik.errors.name
+                  ? "border-red-500"
+                  : "border-muted/30"
+              } bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent`}
             />
+            {formik.touched.name && formik.errors.name && (
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.name}
+              </div>
+            )}
           </div>
 
+          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -65,13 +73,21 @@ export default function SignUp() {
             <input
               type="email"
               id="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-muted/30 bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+              {...formik.getFieldProps("email")}
+              className={`w-full px-4 py-2 rounded-xl border ${
+                formik.touched.email && formik.errors.email
+                  ? "border-red-500"
+                  : "border-muted/30"
+              } bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent`}
             />
+            {formik.touched.email && formik.errors.email && (
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.email}
+              </div>
+            )}
           </div>
 
+          {/* Password */}
           <div>
             <label
               htmlFor="password"
@@ -82,36 +98,54 @@ export default function SignUp() {
             <input
               type="password"
               id="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-muted/30 bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+              {...formik.getFieldProps("password")}
+              className={`w-full px-4 py-2 rounded-xl border ${
+                formik.touched.password && formik.errors.password
+                  ? "border-red-500"
+                  : "border-muted/30"
+              } bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent`}
             />
+            {formik.touched.password && formik.errors.password && (
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.password}
+              </div>
+            )}
           </div>
 
+          {/* Confirm Password */}
           <div>
             <label
-              htmlFor="confirmPassword"
+              htmlFor="passwordConfirm"
               className="block text-sm font-medium text-foreground mb-1"
             >
               Confirm Password
             </label>
             <input
               type="password"
-              id="confirmPassword"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-muted/30 bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+              id="passwordConfirm"
+              {...formik.getFieldProps("passwordConfirm")}
+              className={`w-full px-4 py-2 rounded-xl border ${
+                formik.touched.passwordConfirm && formik.errors.passwordConfirm
+                  ? "border-red-500"
+                  : "border-muted/30"
+              } bg-[var(--surface)] text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent`}
             />
+            {formik.touched.passwordConfirm &&
+              formik.errors.passwordConfirm && (
+                <div className="text-red-500 text-sm mt-1">
+                  {formik.errors.passwordConfirm}
+                </div>
+              )}
           </div>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isAuthenticating || formik.isSubmitting}
             className="w-full py-3 bg-accent text-white font-medium rounded-xl shadow hover:opacity-90 transition"
           >
-            {loading ? "Signing Up..." : "Sign Up"}
+            {isAuthenticating || formik.isSubmitting
+              ? "Signing Up..."
+              : "Sign Up"}
           </button>
         </form>
 
