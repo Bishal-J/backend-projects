@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
@@ -45,6 +46,7 @@ app.use(
     limit: "10kb",
   })
 );
+app.use(cookieParser());
 
 // Not working with the latest node and mongodb
 // Data sanitization against NoSQL Query Injection

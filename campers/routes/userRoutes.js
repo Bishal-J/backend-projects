@@ -22,7 +22,11 @@ router.use(authController.protect);
 // Reset Password Logged In user
 router.patch("/update-password", authController.updatePassword);
 // Update User Details
-router.patch("/update-me", userController.updateMe);
+router.patch(
+  "/update-me",
+  userController.uploadUserPhoto,
+  userController.updateMe
+);
 // Delete User
 router.delete("/delete-me", userController.deleteMe);
 // Get User
